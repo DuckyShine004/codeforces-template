@@ -22,6 +22,6 @@ The template I use for codeforces.
 
 The following image depicts my current setup:
 <p align="center">
-  <img src="https://github.com/DuckyShine004/codeforces-template/blob/main/snapshots/setup.png?raw=true" alt="setup" width="400"/>
+  <img src="https://github.com/DuckyShine004/codeforces-template/blob/main/snapshots/setup.png?raw=true" alt="setup"/>
 </p>
 
