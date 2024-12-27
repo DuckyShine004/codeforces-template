@@ -20,6 +20,8 @@ The template I use for codeforces.
 > [!TIP]
 > you can create a directory to store these templates and define a script (e.g., a `.zsh` script) to copy the contents of this directory to your current working directory. For example, you could use a command like `template codeforces-template`, which would copy all files from the template directory to your current directory.
 
-The following images depicts my current setup.
-
+The following image depicts my current setup:
+<p align="center">
+  <img src="https://github.com/DuckyShine004/codeforces-template/blob/main/snapshots/setup.png?raw=true" alt="setup" width="400"/>
+</p>
 
