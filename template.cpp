@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <chrono>
 #include <climits>
 #include <cmath>
 #include <cstdio>
@@ -13,16 +12,14 @@
 #include <set>
 #include <stack>
 #include <string>
+#include <utility>
 #include <vector>
 
 #ifndef ONLINE_JUDGE
 #include "Debug.h"
-#else
-debug(...)
 #endif
 
 using namespace std;
-using namespace chrono;
 
 #define f first
 #define s second
@@ -77,6 +74,14 @@ template <typename... T> void readin(T &...args) {
 
 template <typename T> T gcd(T a, T b) {
     return (b == 0) ? a : gcd(b, a % b);
+}
+
+template <typename T> bool in(const set<T> &s, T t) {
+    return s.find(t) != s.end();
+}
+
+template <typename T> T sum(const vector<T> &v) {
+    return accumulate(all(v), T(0));
 }
 
 template <typename T> int bs(const T &arr, int t, bool find = false) {
@@ -137,9 +142,8 @@ template <typename T> int bsr(const T &arr, int t, bool find = false) {
     return (find ? l : (arr[l] == t ? l : -1));
 }
 
-// Simple 1D range query segment tree
-class SegmentTree {
-  public:
+// Simple 1D range query segment tree inc range [a,b]
+struct SegmentTree {
     vi st;
 
     SegmentTree(const vector<int> &a, int n) {
@@ -150,11 +154,9 @@ class SegmentTree {
 
         for (int i = n - 1; i >= 1; i--) {
             st[i] += st[i << 1];
-            st[i] += st[(i << 1) + 1];
+            st[i] += st[i << 1 | 1];
         }
     }
-
-    ~SegmentTree();
 
     void update(int p, int v, int n) {
         p += n;
@@ -165,7 +167,7 @@ class SegmentTree {
             p >>= 1;
 
             st[p] += st[p << 1];
-            st[p] += st[(p << 1) + 1];
+            st[p] += st[p << 1 | 1];
         }
     }
 
@@ -175,13 +177,13 @@ class SegmentTree {
 
         int res = 0;
 
-        while (l < r) {
-            if (l & 1) {
+        while (l <= r) {
+            if ((l & 1) == 1) {
                 res += st[l++];
             }
 
-            if (r & 1) {
-                res += st[--r];
+            if ((r & 1) == 0) {
+                res += st[r--];
             }
 
             l >>= 1;
@@ -192,8 +194,7 @@ class SegmentTree {
     }
 };
 
-class UnionFind {
-  public:
+struct UnionFind {
     vi reps;
     vi rank;
 
@@ -202,8 +203,6 @@ class UnionFind {
             reps[i] = i;
         }
     }
-
-    ~UnionFind();
 
     int find(int x) {
         while (x != reps[x]) {
@@ -234,14 +233,11 @@ class UnionFind {
     }
 };
 
-class vec3 {
-  public:
+struct vec3 {
     double x, y, z;
 
     vec3() : x(0), y(0), z(0) {
     }
-
-    ~vec3();
 
     vec3(double dx, double dy, double dz = 0) : x(dx), y(dy), z(dz) {
     }
@@ -299,6 +295,10 @@ inline vec3 operator*(const vec3 &a, double t) {
     return vec3(a.x * t, a.y * t, a.z * t);
 }
 
+inline vec3 operator*(const double t, const vec3 &a) {
+    return a * t;
+}
+
 inline vec3 operator/(const vec3 &a, double t) {
     return vec3(a.x / t, a.y / t, a.z / t);
 }
@@ -321,9 +321,9 @@ void solve() {
 int main() {
     fastio();
 
-    int t = 1;
-    /* int t; */
-    /* cin >> t; */
+    /* int t = 1; */
+    int t;
+    cin >> t;
 
 #ifdef DEBUG
     while (t--) {

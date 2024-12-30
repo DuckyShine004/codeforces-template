@@ -12,8 +12,4 @@ if [ ! -f "$FILENAME" ]; then
   exit 1
 fi
 
-if [[ $OSTYPE == 'darwin'* ]]; then
-  xclip -selection clipboard < "$FILENAME"
-else
-  pbcopy "$FILENAME"
-fi
+xclip -selection clipboard < "$FILENAME"

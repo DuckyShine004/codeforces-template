@@ -179,6 +179,24 @@ template <typename T, typename Container> void __print(const stack<T, Container>
     cerr << '}';
 }
 
+template <typename T, typename Container, typename Compare> void __print(const priority_queue<T, Container, Compare> &pq) {
+    int f = 0;
+
+    priority_queue<T, Container, Compare> tmp = pq;
+
+    cerr << '{';
+
+    while (!tmp.empty()) {
+        if (f++)
+            cerr << ", ";
+        __print(tmp.top());
+
+        tmp.pop();
+    }
+
+    cerr << '}';
+}
+
 inline vector<string> split_names(const string &names_str) {
     vector<string> names;
 
