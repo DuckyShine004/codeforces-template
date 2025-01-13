@@ -234,34 +234,41 @@ inline vector<string> split_names(const string &names_str) {
     return names;
 }
 
+template <typename T> inline string to_string_debug(const T &x) {
+    ostringstream oss;
+    streambuf *old_buf = cerr.rdbuf(oss.rdbuf());
+
+    __print(x);
+    cerr.rdbuf(old_buf);
+
+    return oss.str();
+}
+
 namespace DebugImpl {
-
-template <typename T, typename... Args> void debug_impl(const char *func, int line, const char *names_str, const T &first, const Args &...args) {
-    string names_cpp(names_str);
-
-    vector<string> names = split_names(names_cpp);
+template <typename... Args> void debug_impl(const char *func, int line, const char *names_str, const Args &...args) {
+    vector<string> names = split_names(names_str);
+    vector<string> values{to_string_debug(args)...};
 
     if (names.empty())
         return;
 
-    string first_name = names[0];
+    cerr << string(recur_depth, '\t') << "\033[91m" << func << ":" << line << " [";
 
-    cerr << string(recur_depth, '\t') << "\033[91m" << func << ":" << line << " [" << first_name << "] = ";
-    __print(first);
-    cerr << "\033[39m" << endl;
-
-    if constexpr (sizeof...(args) > 0) {
-        string remaining_names;
-
-        for (size_t i = 1; i < names.size(); ++i) {
-            if (i > 1)
-                remaining_names += ", ";
-
-            remaining_names += names[i];
-        }
-
-        debug_impl(func, line, remaining_names.c_str(), args...);
+    for (size_t i = 0; i < names.size(); i++) {
+        if (i > 0)
+            cerr << ", ";
+        cerr << names[i];
     }
+
+    cerr << "] = ";
+
+    for (size_t i = 0; i < values.size(); i++) {
+        if (i > 0)
+            cerr << " ";
+        cerr << values[i];
+    }
+
+    cerr << "\033[39m" << endl;
 }
 } // namespace DebugImpl
 

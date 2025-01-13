@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include <climits>
 #include <cmath>
 #include <cstdio>
@@ -15,11 +16,15 @@
 #include <utility>
 #include <vector>
 
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
 #ifndef ONLINE_JUDGE
 #include "Debug.h"
 #endif
 
 using namespace std;
+using namespace __gnu_pbds;
 
 #define f first
 #define s second
@@ -55,21 +60,26 @@ typedef vector<pll> vpll;
 
 const string ln = "\n";
 const double PI = 3.14159265358979323846;
-const int MAX_N = 1e5 + 5;
-const ll MOD = 1e9 + 7;
-const ll INF = 1e9;
 const ll INFLL = LLONG_MAX;
 const pii d4[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 const pii d8[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, -1}};
 
-template <typename T> void readarr(vector<T> &arr) {
-    for (T &v : arr) {
+template <typename T> void read(T &value) {
+    cin >> value;
+}
+
+template <typename T> void read(vector<T> &arr) {
+    for (auto &v : arr) {
         cin >> v;
     }
 }
 
-template <typename... T> void readin(T &...args) {
-    ((cin >> args), ...);
+template <typename S, typename T> void read(pair<S, T> &p) {
+    cin >> p.f >> p.s;
+}
+
+template <typename... Args> void input(Args &...args) {
+    (read(args), ...);
 }
 
 template <typename T> T gcd(T a, T b) {
@@ -84,77 +94,21 @@ template <typename T> T sum(const vector<T> &v) {
     return accumulate(all(v), T(0));
 }
 
-template <typename T> int bs(const T &arr, int t, bool find = false) {
-    int l = 0;
-    int r = sz(arr) - 1;
-    int k;
-
-    while (l <= r) {
-        k = l + (r - l) / 2;
-
-        if (arr[k] == t) {
-            return k;
-        }
-
-        if (arr[k] < t) {
-            l = k + 1;
-        } else {
-            r = k - 1;
-        }
-    }
-
-    return (find ? l : (arr[l] == t ? l : -1));
-}
-
-template <typename T> int bsl(const T &arr, int t, bool find = false) {
-    int l = 0;
-    int r = sz(arr) - 1;
-    int k;
-
-    while (l < r) {
-        k = l + (r - l) / 2;
-
-        if (arr[k] >= t) {
-            r = k;
-        } else {
-            l = k + 1;
-        }
-    }
-
-    return (find ? l : (arr[l] == t ? l : -1));
-}
-
-template <typename T> int bsr(const T &arr, int t, bool find = false) {
-    int l = 0;
-    int r = sz(arr) - 1;
-    int k;
-
-    while (l < r) {
-        k = l + (r - l + 1) / 2;
-
-        if (arr[k] <= t) {
-            l = k;
-        } else {
-            r = k - 1;
-        }
-    }
-
-    return (find ? l : (arr[l] == t ? l : -1));
-}
+template <class S, class T = null_type, class chash = hash<S>> using hset = gp_hash_table<S, T, chash>;
+template <class S, class T = null_type, class cmp = less<S>> using oset = tree<S, T, cmp, rb_tree_tag, tree_order_statistics_node_update>;
 
 // Simple 1D range query segment tree inc range [a,b]
 struct SegmentTree {
     vi st;
 
     SegmentTree(const vector<int> &a, int n) {
-        st.resize(4 * n);
+        st.resize(4 * n, 0);
 
         for (int i = 0; i < n; i++)
             st[n + i] = a[i];
 
         for (int i = n - 1; i >= 1; i--) {
-            st[i] += st[i << 1];
-            st[i] += st[i << 1 | 1];
+            st[i] = st[i << 1] + st[i << 1 | 1];
         }
     }
 
@@ -165,9 +119,7 @@ struct SegmentTree {
 
         while (p > 1) {
             p >>= 1;
-
-            st[p] += st[p << 1];
-            st[p] += st[p << 1 | 1];
+            st[p] = st[p << 1] + st[p << 1 | 1];
         }
     }
 
@@ -313,6 +265,15 @@ inline vec3 cross(const vec3 &a, const vec3 &b) {
 
 inline double area(const vec3 &a, const vec3 &b, const vec3 &c) {
     return 0.5 * cross(b - a, c - a).magnitude();
+}
+
+int ord(char &c) {
+    int x = int(c);
+
+    if (!isalpha(c))
+        return x - 48;
+
+    return islower(c) ? x - 97 : x - 65;
 }
 
 void solve() {
