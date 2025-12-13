@@ -28,41 +28,27 @@ using namespace __gnu_pbds;
 
 #define f first
 #define s second
-#define ppb pop_back
-#define psb push_back
 #define fors(i, a, b) for (auto i = a; i < b; i++)
 #define revs(i, a, b) for (auto i = a; i > b; i--)
-#define len(a) (a).length()
-#define sz(a) (a).size()
-#define vec1(type, n) vector<type>(n)
-#define vec2(type, n, m) vector<vector<type>>((n), vector<type>((m)))
-#define lsh(a) (1 << (a));
 #define str(a) to_string(a)
-#define ft front()
-#define bk back()
 #define all(a) (a).begin(), (a).end()
+#define in(a, b) ((a).find(b) != (a).end())
 #define print(n) cout << n << " ";
 #define println(n) cout << n << "\n";
 #define fastio() (ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr), cerr.tie(nullptr), cout << fixed, cout << setprecision(10));
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef pair<int, int> pii;
-typedef pair<ll, ll> pll;
-typedef vector<vector<int>> vvi;
-typedef vector<vector<bool>> vvb;
-typedef vector<vector<ll>> vvll;
-typedef vector<int> vi;
-typedef vector<ll> vll;
-typedef vector<string> vs;
-typedef vector<pii> vpii;
-typedef vector<pll> vpll;
+using ll = long long;
+using ull = unsigned long long;
+using pii = pair<int, int>;
+using pll = pair<long, long>;
+using vi = vector<int>;
+using vll = vector<long long>;
+using vpii = vector<pair<int, int>>;
+using vpll = vector<pair<long, long>>;
 
-const string ln = "\n";
-const double PI = 3.14159265358979323846;
-const ll INFLL = LLONG_MAX;
-const pii d4[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-const pii d8[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, -1}};
+inline constexpr double PI = 3.14159265358979323846;
+inline constexpr pair<int, int> D4[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+inline constexpr pair<int, int> D8[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, -1}};
 
 template <typename T> void read(T &value) {
     cin >> value;
@@ -84,14 +70,6 @@ template <typename... Args> void input(Args &...args) {
 
 template <typename T> T gcd(T a, T b) {
     return (b == 0) ? a : gcd(b, a % b);
-}
-
-template <typename T> bool in(const set<T> &s, T t) {
-    return s.find(t) != s.end();
-}
-
-template <typename T> T sum(const vector<T> &v) {
-    return accumulate(all(v), T(0));
 }
 
 template <class S, class T = null_type, class chash = hash<S>> using hset = gp_hash_table<S, T, chash>;
