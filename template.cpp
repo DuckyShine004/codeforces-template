@@ -9,7 +9,6 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
-#include <queue>
 #include <set>
 #include <stack>
 #include <string>
@@ -26,29 +25,25 @@
 using namespace std;
 using namespace __gnu_pbds;
 
-#define f first
-#define s second
-#define fors(i, a, b) for (auto i = a; i < b; i++)
-#define revs(i, a, b) for (auto i = a; i > b; i--)
-#define str(a) to_string(a)
 #define all(a) (a).begin(), (a).end()
-#define in(a, b) ((a).find(b) != (a).end())
-#define print(n) cout << n << " ";
-#define println(n) cout << n << "\n";
 #define fastio() (ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr), cerr.tie(nullptr), cout << fixed, cout << setprecision(10));
 
-using ll = long long;
-using ull = unsigned long long;
-using pii = pair<int, int>;
-using pll = pair<long, long>;
-using vi = vector<int>;
-using vll = vector<long long>;
-using vpii = vector<pair<int, int>>;
-using vpll = vector<pair<long, long>>;
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<int, int> pii;
+typedef pair<long, long> pll;
+typedef vector<int> vi;
+typedef vector<long long> vll;
+typedef vector<pair<int, int>> vpii;
+typedef vector<pair<long, long>> vpll;
 
 inline constexpr double PI = 3.14159265358979323846;
 inline constexpr pair<int, int> D4[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 inline constexpr pair<int, int> D8[8] = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, -1}};
+
+template <typename T> string str(T a) {
+    return to_string(a);
+}
 
 template <typename T> void read(T &value) {
     cin >> value;
@@ -77,188 +72,96 @@ template <class S, class T = null_type, class cmp = less<S>> using oset = tree<S
 
 // Simple 1D range query segment tree inc range [a,b]
 struct SegmentTree {
-    vi st;
+    vector<int> t;
+    int n;
 
-    SegmentTree(const vector<int> &a, int n) {
-        st.resize(4 * n, 0);
-
-        for (int i = 0; i < n; i++)
-            st[n + i] = a[i];
-
-        for (int i = n - 1; i >= 1; i--) {
-            st[i] = st[i << 1] + st[i << 1 | 1];
-        }
+    SegmentTree(const vector<int> &a, int n) : t(n << 2), n(n) {
+        this->build(a, 1, 0, n - 1);
     }
 
-    void update(int p, int v, int n) {
-        p += n;
-
-        st[p] = v;
-
-        while (p > 1) {
-            p >>= 1;
-            st[p] = st[p << 1] + st[p << 1 | 1];
-        }
-    }
-
-    int query(int l, int r, int n) {
-        l += n;
-        r += n;
-
-        int res = 0;
-
-        while (l <= r) {
-            if ((l & 1) == 1) {
-                res += st[l++];
-            }
-
-            if ((r & 1) == 0) {
-                res += st[r--];
-            }
-
-            l >>= 1;
-            r >>= 1;
-        }
-
-        return res;
-    }
-};
-
-struct UnionFind {
-    vi reps;
-    vi rank;
-
-    UnionFind(int n) : reps(n), rank(n, 0) {
-        fors(i, 0, n) {
-            reps[i] = i;
-        }
-    }
-
-    int find(int x) {
-        while (x != reps[x]) {
-            reps[x] = reps[reps[x]];
-            x = reps[x];
-        }
-
-        return x;
-    }
-
-    void merge(int x, int y) {
-        x = find(x);
-        y = find(y);
-
-        if (x == y) {
-            return;
-        }
-
-        if (rank[x] > rank[y]) {
-            reps[y] = x;
+    void build(const vector<int> &a, int v, int tl, int tr) {
+        if (tl == tr) {
+            t[v] = a[tl];
         } else {
-            reps[x] = y;
+            int tm = (tl + tr) >> 1;
+            build(a, v << 1, tl, tm);
+            build(a, v << 1 | 1, tm + 1, tr);
+            t[v] = t[v << 1] + t[v << 1 | 1];
+        }
+    }
 
-            if (rank[x] == rank[y]) {
-                rank[y]++;
-            }
+    int query(int l, int r) {
+        return Query(1, 0, n - 1, l, r);
+    }
+
+    int Query(int v, int tl, int tr, int l, int r) {
+        if (l > r)
+            return 0;
+        if (l == tl && r == tr)
+            return t[v];
+        int tm = (tl + tr) >> 1;
+        return Query(v << 1, tl, tm, l, min(r, tm)) + Query(v << 1 | 1, tm + 1, tr, max(l, tm + 1), r);
+    }
+
+    void update(int pos, int val) {
+        Update(1, 0, n - 1, pos, val);
+    }
+
+    void Update(int v, int tl, int tr, int pos, int val) {
+        if (tl == tr) {
+            t[v] = val;
+        } else {
+            int tm = (tl + tr) >> 1;
+            if (pos <= tm)
+                Update(v << 1, tl, tm, pos, val);
+            else
+                Update(v << 1 | 1, tm + 1, tr, pos, val);
+            t[v] = t[v << 1] + t[v << 1 | 1];
         }
     }
 };
 
-struct vec3 {
-    double x, y, z;
+// NOTE: consider using hashmaps or c-array
+struct UnionFind {
+    vector<int> parent, rank;
 
-    vec3() : x(0), y(0), z(0) {
+    UnionFind(int n) : parent(n), rank(n, 0) {
+        for (int i = 0; i < n; ++i)
+            parent[i] = i;
     }
 
-    vec3(double dx, double dy, double dz = 0) : x(dx), y(dy), z(dz) {
+    // NOTE: consider NOT using path compression
+    int find(int u) {
+        while (u != parent[u]) {
+            parent[u] = parent[parent[u]];
+            u = parent[u];
+        }
+        return u;
     }
 
-    vec3 operator-() const {
-        return vec3(-x, -y, -z);
-    }
-
-    double magnitude() const {
-        return sqrt(x * x + y * y + z * z);
-    }
-
-    vec3 &operator-=(const vec3 &other) {
-        x -= other.x;
-        y -= other.y;
-        z -= other.z;
-
-        return *this;
-    }
-
-    vec3 &operator+=(const vec3 &other) {
-        x += other.x;
-        y += other.y;
-        z += other.z;
-
-        return *this;
-    }
-
-    vec3 &operator*=(double t) {
-        x *= t;
-        y *= t;
-        z *= t;
-
-        return *this;
-    }
-
-    vec3 &operator/=(double t) {
-        x /= t;
-        y /= t;
-        z /= t;
-
-        return *this;
+    void merge(int u, int v) {
+        u = find(u);
+        v = find(v);
+        if (u == v)
+            return;
+        if (rank[u] < rank[v])
+            swap(u, v);
+        parent[v] = u;
+        if (rank[u] == rank[v])
+            ++rank[u];
     }
 };
-
-inline vec3 operator-(const vec3 &a, const vec3 &b) {
-    return vec3(a.x - b.x, a.y - b.y, a.z - b.z);
-}
-
-inline vec3 operator+(const vec3 &a, const vec3 &b) {
-    return vec3(a.x + b.x, a.y + b.y, a.z + b.z);
-}
-
-inline vec3 operator*(const vec3 &a, double t) {
-    return vec3(a.x * t, a.y * t, a.z * t);
-}
-
-inline vec3 operator*(const double t, const vec3 &a) {
-    return a * t;
-}
-
-inline vec3 operator/(const vec3 &a, double t) {
-    return vec3(a.x / t, a.y / t, a.z / t);
-}
-
-inline vec3 cross(const vec3 &a, const vec3 &b) {
-    double dx = a.y * b.z - a.z * b.y;
-    double dy = a.z * b.x - a.x * b.z;
-    double dz = a.x * b.y - a.y * b.x;
-
-    return vec3(dx, dy, dz);
-}
-
-inline double area(const vec3 &a, const vec3 &b, const vec3 &c) {
-    return 0.5 * cross(b - a, c - a).magnitude();
-}
-
-int ord(char &c) {
-    int x = int(c);
-
-    if (!isalpha(c))
-        return x - 48;
-
-    return islower(c) ? x - 97 : x - 65;
-}
 
 void solve() {
 }
 
 int main() {
-    fastio();
+    // FASTIO
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    cerr.tie(nullptr);
+    cout << fixed, cout << setprecision(10);
 
     /* int t = 1; */
     int t;
