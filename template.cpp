@@ -28,14 +28,14 @@ using namespace __gnu_pbds;
 #define all(a) (a).begin(), (a).end()
 #define fastio() (ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr), cerr.tie(nullptr), cout << fixed, cout << setprecision(10));
 
-typedef long long ll;
-typedef unsigned long long ull;
-typedef pair<int, int> pii;
-typedef pair<long, long> pll;
-typedef vector<int> vi;
-typedef vector<long long> vll;
-typedef vector<pair<int, int>> vpii;
-typedef vector<pair<long, long>> vpll;
+using ll = long long;
+using ull = unsigned long long;
+using pii = pair<int, int>;
+using pll = pair<long, long>;
+using vi = vector<int>;
+using vll = vector<long long>;
+using vpii = vector<pair<int, int>>;
+using vpll = vector<pair<long, long>>;
 
 inline constexpr double PI = 3.14159265358979323846;
 inline constexpr pair<int, int> D4[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
