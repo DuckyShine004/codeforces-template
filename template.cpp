@@ -1,3 +1,5 @@
+#pragma GCC optimize("O3,inline")
+
 #include <algorithm>
 #include <cctype>
 #include <climits>
