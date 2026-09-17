@@ -47,112 +47,13 @@ template <typename T> string str(T a) {
     return to_string(a);
 }
 
-template <typename T> void read(T &value) {
-    cin >> value;
-}
-
-template <typename T> void read(vector<T> &arr) {
-    for (auto &v : arr) {
-        cin >> v;
-    }
-}
-
-template <typename S, typename T> void read(pair<S, T> &p) {
-    cin >> p.f >> p.s;
-}
-
-template <typename... Args> void input(Args &...args) {
-    (read(args), ...);
-}
-
 template <typename T> T gcd(T a, T b) {
     return (b == 0) ? a : gcd(b, a % b);
 }
 
+/* NOTE: For custom hash refer to https://gist.github.com/DuckyShine004/4dedbba84e0a9d77885d0cf1ea0e429f */
 template <class S, class T = null_type, class chash = hash<S>> using hset = gp_hash_table<S, T, chash>;
 template <class S, class T = null_type, class cmp = less<S>> using oset = tree<S, T, cmp, rb_tree_tag, tree_order_statistics_node_update>;
-
-// Simple 1D range query segment tree inc range [a,b]
-struct SegmentTree {
-    vector<int> t;
-    int n;
-
-    SegmentTree(const vector<int> &a, int n) : t(n << 2), n(n) {
-        this->build(a, 1, 0, n - 1);
-    }
-
-    void build(const vector<int> &a, int v, int tl, int tr) {
-        if (tl == tr) {
-            t[v] = a[tl];
-        } else {
-            int tm = (tl + tr) >> 1;
-            build(a, v << 1, tl, tm);
-            build(a, v << 1 | 1, tm + 1, tr);
-            t[v] = t[v << 1] + t[v << 1 | 1];
-        }
-    }
-
-    int query(int l, int r) {
-        return Query(1, 0, n - 1, l, r);
-    }
-
-    int Query(int v, int tl, int tr, int l, int r) {
-        if (l > r)
-            return 0;
-        if (l == tl && r == tr)
-            return t[v];
-        int tm = (tl + tr) >> 1;
-        return Query(v << 1, tl, tm, l, min(r, tm)) + Query(v << 1 | 1, tm + 1, tr, max(l, tm + 1), r);
-    }
-
-    void update(int pos, int val) {
-        Update(1, 0, n - 1, pos, val);
-    }
-
-    void Update(int v, int tl, int tr, int pos, int val) {
-        if (tl == tr) {
-            t[v] = val;
-        } else {
-            int tm = (tl + tr) >> 1;
-            if (pos <= tm)
-                Update(v << 1, tl, tm, pos, val);
-            else
-                Update(v << 1 | 1, tm + 1, tr, pos, val);
-            t[v] = t[v << 1] + t[v << 1 | 1];
-        }
-    }
-};
-
-// NOTE: consider using hashmaps or c-array
-struct UnionFind {
-    vector<int> parent, rank;
-
-    UnionFind(int n) : parent(n), rank(n, 0) {
-        for (int i = 0; i < n; ++i)
-            parent[i] = i;
-    }
-
-    // NOTE: consider NOT using path compression
-    int find(int u) {
-        while (u != parent[u]) {
-            parent[u] = parent[parent[u]];
-            u = parent[u];
-        }
-        return u;
-    }
-
-    void merge(int u, int v) {
-        u = find(u);
-        v = find(v);
-        if (u == v)
-            return;
-        if (rank[u] < rank[v])
-            swap(u, v);
-        parent[v] = u;
-        if (rank[u] == rank[v])
-            ++rank[u];
-    }
-};
 
 void solve() {
 }
